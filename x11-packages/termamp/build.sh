@@ -1,9 +1,10 @@
-TERMUX_PKG_HOMEPAGE=https://github.com/quydev-fs/TermuxMusic95
+TERMUX_PKG_HOMEPAGE=https://github.com/quydev-fs/TermAMP
 TERMUX_PKG_DESCRIPTION="A simple WinAMP 2.X inspired Music player built specifically for termux"
 TERMUX_PKG_LICENSE="MIT"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION=0.2.2a
-TERMUX_PKG_SHA256=a59a2c13be42bf20e1f5a73b5b8b5a1f382565c649e83e9bf05dafbf8d9fe142
+TERMUX_PKG_VERSION=0.3b
+TERMUX_PKG_SRCURL=https://github.com/quydev-fs/TermAMP/archive/refs/tags/v$TERMUX_PKG_VERSION.zip
+TERMUX_PKG_SHA256=e8fe95f33450beee7d154f3f1107ecf087e98a77935d9dfc9546758342058a2c
 TERMUX_PKG_DEPENDS="gtk3, gstreamer"
 TERMUX_PKG_BUILD_DEPENDS="clang, make, pkg-config"
 
