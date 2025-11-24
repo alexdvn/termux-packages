@@ -13,5 +13,6 @@ termux_step_make() {
 }
 
 termux_step_make_install() {
-    install -Dm700 termuxmusic95 "$TERMUX_PREFIX/bin/termuxmusic95"
+    install -Dm700 TermAMP "$TERMUX_PREFIX/bin/TermAMP"
+	ln -s $TERMUX_PREFIX/bin/TermAMP $TERMUX_PREFIX/bin/termamp
 }
