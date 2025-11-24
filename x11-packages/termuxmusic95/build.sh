@@ -6,3 +6,12 @@ TERMUX_PKG_VERSION=0.2.2a
 TERMUX_PKG_SRCURL=https://github.com/quydev-fs/TermuxMusic95/archive/refs/tags/v$TERMUX_PKG_VERSION.zip
 TERMUX_PKG_DEPENDS="gtk3, gstreamer"
 TERMUX_PKG_BUILD_DEPENDS="clang, make, pkg-config"
+TERMUX_PKG_BUILD_IN_SRC=true
+
+termux_step_make() {
+    make
+}
+
+termux_step_make_install() {
+    install -Dm700 termuxmusic95 "$TERMUX_PREFIX/bin/termuxmusic95"
+}
