@@ -6,10 +6,9 @@ TERMUX_PKG_VERSION=0.2.2a
 TERMUX_PKG_SHA256=a59a2c13be42bf20e1f5a73b5b8b5a1f382565c649e83e9bf05dafbf8d9fe142
 TERMUX_PKG_DEPENDS="gtk3, gstreamer"
 TERMUX_PKG_BUILD_DEPENDS="clang, make, pkg-config"
-TERMUX_PKG_BUILD_IN_SRC=true
 
 termux_step_make() {
-    make
+    make -j$(nproc --all)
 }
 
 termux_step_make_install() {
