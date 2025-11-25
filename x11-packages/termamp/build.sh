@@ -7,6 +7,7 @@ TERMUX_PKG_SRCURL=https://github.com/quydev-fs/TermAMP/archive/refs/tags/v$TERMU
 TERMUX_PKG_SHA256=e8fe95f33450beee7d154f3f1107ecf087e98a77935d9dfc9546758342058a2c
 TERMUX_PKG_DEPENDS="gtk3, gstreamer"
 TERMUX_PKG_BUILD_DEPENDS="clang, make, pkg-config"
+TERMUX_PKG_BUILD_IN_SRC=true
 
 termux_step_make() {
     make -j$(nproc --all)
