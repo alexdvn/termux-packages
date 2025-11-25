@@ -14,6 +14,6 @@ termux_step_make() {
 }
 
 termux_step_make_install() {
-    install -Dm700 TermAMP "$TERMUX_PREFIX/bin/TermAMP"
+    install -Dm700 build/bin/TermAMP "$TERMUX_PREFIX/bin/TermAMP"
 	ln -s $TERMUX_PREFIX/bin/TermAMP $TERMUX_PREFIX/bin/termamp
 }
