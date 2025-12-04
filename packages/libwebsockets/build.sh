@@ -2,10 +2,9 @@ TERMUX_PKG_HOMEPAGE=https://libwebsockets.org
 TERMUX_PKG_DESCRIPTION="Lightweight C websockets library"
 TERMUX_PKG_LICENSE="LGPL-2.0"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="4.4.1"
-TERMUX_PKG_REVISION=1
+TERMUX_PKG_VERSION="4.5.2"
 TERMUX_PKG_SRCURL=https://github.com/warmcat/libwebsockets/archive/v${TERMUX_PKG_VERSION}.tar.gz
-TERMUX_PKG_SHA256=472e6cfa77b6f80ff2cc176bc59f6cb2856df7e30e8f31afcbd1fc94ffd2f828
+TERMUX_PKG_SHA256=04244efb7a6438c8c6bfc79b21214db5950f72c9cf57e980af57ca321aae87b2
 TERMUX_PKG_DEPENDS="openssl, libcap, libuv, zlib"
 TERMUX_PKG_BREAKS="libwebsockets-dev"
 TERMUX_PKG_REPLACES="libwebsockets-dev"
@@ -23,7 +22,7 @@ TERMUX_PKG_UPDATE_TAG_TYPE="newest-tag"
 termux_step_post_get_source() {
 	# Do not forget to bump revision of reverse dependencies and rebuild them
 	# after SOVERSION is changed.
-	local _SOVERSION=20
+	local _SOVERSION=21
 
 	local v=$(sed -En 's/^set\(SOVERSION\s+"?([0-9]+).*/\1/p' \
 			CMakeLists.txt)
