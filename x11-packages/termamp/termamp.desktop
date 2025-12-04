@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=TermAMP
+Type=Application
+Terminal=False
+Exec=termamp
+Version=1.0
+Description=A simple WinAMP 2.X inspired Music player.
+Catagory=Music;
