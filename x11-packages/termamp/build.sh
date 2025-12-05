@@ -16,5 +16,5 @@ termux_step_make() {
 termux_step_make_install() {
     install -Dm700 build/bin/TermAMP "$TERMUX_PREFIX/bin/TermAMP"
 	ln -s $TERMUX_PREFIX/bin/TermAMP $TERMUX_PREFIX/bin/termamp
-	install -Dn700 $TERMUX_PKG_BUILDER_DIR/termamp.desktop $TERMUX_PREFIX/share/applications
+	install -Dm700 $TERMUX_PKG_BUILDER_DIR/termamp.desktop $TERMUX_PREFIX/share/applications
 }
