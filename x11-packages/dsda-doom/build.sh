@@ -1,2 +1,10 @@
 TERMUX_PKG_HONEPAGE=https://github.com/kraflab/dsda-doom
 TERMUX_PKG_DESCRIPTION="A BOOM-compatible DOOM engine made for speedrunners"
+TERMUX_PKG_LICENSE="GPL-2.0"
+TERMUX_PKG_MAINTAINER=@alexdvn
+TERMUX_PKG_VERSION=0.29.4
+TERMUX_PKG_SRCURL=https://github.com/kraflab/dsda-doom/archive/refs/tags/v$TERMUX_PKG_VERSION.zip
+TERMUX_PKG_SHA256=e36886e94f5a74a95e9f212540a1fe0a979caeee8b5ef55e299c797f7bf59f15
+TERMUX_PKG_DEPENDS="libc++, opengl, glu, sdl2, sdl2-mixer, sdl2-image, zlib, libsndfile, libzip"
+TERMUX_PKG_RECCOMENDS="libmad, fluidsynth, portmidi, vorbisfile,"
+TERMUX_PKG_BUILD_DEPENDS="clang, make, cmake, libglvnd-dev"
