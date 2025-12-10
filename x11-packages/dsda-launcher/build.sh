@@ -26,7 +26,7 @@ termux_step_configure() {
 	# for ensuring the resulting executable links correctly with Termux libraries.
 	# The target name is inferred from the .pro file (or set via TARGET in .pro).
 	
-	${TERMUX_PREFIX}/opt/qt6/cross/bin/qmake6 \
+	${TERMUX_PREFIX}/bin/qmake6 \
 		-set QMAKE_LFLAGS+="-Wl,-rpath=${TERMUX_PREFIX}/lib" \
 		-set QMAKE_CXXFLAGS+="-Wl,-rpath=${TERMUX_PREFIX}/lib"
 }
