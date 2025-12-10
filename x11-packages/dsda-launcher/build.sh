@@ -1,4 +1,4 @@
-TERMUX_PKG_HOMEPAGE="https://github.com/Pedro-Beirao/dsda-launcher"
+pTERMUX_PKG_HOMEPAGE="https://github.com/Pedro-Beirao/dsda-launcher"
 TERMUX_PKG_LICENSE="GPL-3.0"
 TERMUX_PKG_MAINTAINER="@alexdvn"
 TERMUX_PKG_VERSION=1.4
@@ -7,13 +7,6 @@ TERMUX_PKG_SHA256=b8f80047ee39a0bc49d2e06a6e0a862f60aa9cf5c86e01ef960426d978cb5c
 TERMUX_PKG_DEPENDS="libc++, qt6-qtbase, dsda-doom"
 TERMUX_PKG_BUILD_DEPENDS="qt6-qtbase-cross-tools, xorgproto, make"
 TERMUX_PKG_BUILD_IN_SRC=true 
-
-termux_step_pre_configure() {
-	# Ensure the source directory is clean before configuration
-	# This step is sometimes necessary for qmake projects
-	rm -rf $TERMUX_PKG_BUILDDIR
-	mkdir -p $TERMUX_PKG_BUILDDIR
-}
 
 termux_step_configure() {
 	# The qmake executable for cross-compilation is qmake6,
