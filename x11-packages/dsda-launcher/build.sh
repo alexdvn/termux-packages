@@ -1,4 +1,4 @@
-pTERMUX_PKG_HOMEPAGE="https://github.com/Pedro-Beirao/dsda-launcher"
+TERMUX_PKG_HOMEPAGE="https://github.com/Pedro-Beirao/dsda-launcher"
 TERMUX_PKG_LICENSE="GPL-3.0"
 TERMUX_PKG_MAINTAINER="@alexdvn"
 TERMUX_PKG_VERSION=1.4
