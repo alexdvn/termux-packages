@@ -18,7 +18,6 @@ termux_step_configure() {
 	# The -set QMAKE_LFLAGS ... and -set QMAKE_CXXFLAGS ... are crucial 
 	# for ensuring the resulting executable links correctly with Termux libraries.
 	# The target name is inferred from the .pro file (or set via TARGET in .pro).
-	cd src
 	mkdir build; cd build
 	
 	${TERMUX_PREFIX}/bin/qmake6 ..
