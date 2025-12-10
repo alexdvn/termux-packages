@@ -35,6 +35,6 @@ termux_step_make_install() {
 	# 'make install' is often sufficient for qmake projects
 	cd src/build
 	install -Dm700 dsda-launcher $TERMUX_PREFIX/bin
-	cp -rf icons $TERMUX_PREFIX/share
-	install -Dm700 icons/dsda-Launcher.desktop $TERMUX_PREFIX/share/applications
+	cp -rf ../icons $TERMUX_PREFIX/share
+	install -Dm700 ../icons/dsda-Launcher.desktop $TERMUX_PREFIX/share/applications
 }
