@@ -18,6 +18,7 @@ termux_step_configure() {
 	# The -set QMAKE_LFLAGS ... and -set QMAKE_CXXFLAGS ... are crucial 
 	# for ensuring the resulting executable links correctly with Termux libraries.
 	# The target name is inferred from the .pro file (or set via TARGET in .pro).
+	cd src
 	mkdir build; cd build
 	
 	${TERMUX_PREFIX}/bin/qmake6 ..
@@ -25,11 +26,14 @@ termux_step_configure() {
 
 termux_step_make() {
 	# Build the project using the generated Makefile and 'make'
+	cd src/build
 	make -j$(nproc --all)
 }
 
 termux_step_make_install() {
 	# Install the built application files
 	# 'make install' is often sufficient for qmake projects
-	make install
+	install -Dm700 dsda-launcher $TERMUX_PREFIX/bin
+	cp -rf icons $TERMUX_PREFIX/share
+	install -Dm700 icons/dsda-Launcher.desktop $TERMUX_PREFIX/share/applications
 }
