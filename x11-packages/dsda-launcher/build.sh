@@ -21,9 +21,7 @@ termux_step_configure() {
 	cd src
 	mkdir build; cd build
 	
-	${TERMUX_PREFIX}/bin/qmake6 \
-		-set QMAKE_LFLAGS+="-Wl,-rpath=${TERMUX_PREFIX}/lib" \
-		-set QMAKE_CXXFLAGS+="-Wl,-rpath=${TERMUX_PREFIX}/lib" ..
+	${TERMUX_PREFIX}/bin/qmake6 ..
 }
 
 termux_step_make() {
