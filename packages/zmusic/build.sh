@@ -1,4 +1,4 @@
-TTRMUX_PKG_HOMEPAGE=https://github.com/ZDoom/ZMusic
+TERMUX_PKG_HOMEPAGE=https://github.com/ZDoom/ZMusic
 TERMUX_PKG_DESCRIPTION="A library to play music for all ZDoom engines"
 TERMUX_PKG_LICENSE="GPL-3.0, BSD 3-Clause, LGPL-2.1, LGPL-3.0"
 TERMUX_PKG_MAINTAINER=@alexdvn
