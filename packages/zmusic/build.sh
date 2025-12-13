@@ -31,7 +31,7 @@ termux_step_configure() {
 termux_step_make() {
     # Use 'make' to compile the project in the build directory.
     # -j $TERMUX_MAKE_PROCESSES is standard for parallel compilation.
-    make -C $TERMUX_PKG_BUILDDIR -j $TERMUX_MAKE_PROCESSES
+    make -C $TERMUX_PKG_BUILDDIR -j$(nproc --all)
 }
 
 termux_step_make_install() {
