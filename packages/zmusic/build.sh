@@ -5,7 +5,7 @@ TERMUX_PKG_MAINTAINER=@alexdvn
 TERMUX_PKG_VERSION=1.3.0
 TERMUX_PKG_SRCURL=https://github.com/ZDoom/ZMusic/archive/refs/tags/$TERMUX_PKG_VERSION.zip
 TERMUX_PKG_SHA256=f49f3ac3d4845304f45f485f5dd11095504caaf9f1c26b4995b45b1582ee03bc
-TERMUX_PKG_DEPENDS="fluidsynth, game-music-emu, libmpg123, libsndfile, glib"
+TERMUX_PKG_DEPENDS="libc++, libandroid-support, fluidsynth, game-music-emu, libmpg123, libsndfile, glib, iconv"
 TERMUX_PKG_BUILD_DEPENDS="clang, make, pkg-config, cmake"
 
 termux_step_pre_configure() {
