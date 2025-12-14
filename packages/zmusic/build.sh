@@ -9,17 +9,14 @@ TERMUX_PKG_DEPENDS="libc++, libandroid-support, fluidsynth, game-music-emu, libm
 TERMUX_PKG_BUILD_DEPENDS="clang, make, pkg-config, cmake"
 
 termux_step_pre_configure() {
-    # Some projects require creating the build directory
-    # or preparing the source before configuration.
-    # ZMusic might need a clean build directory.
+    # This is normal for CMake to use
     mkdir -p $TERMUX_PKG_BUILDDIR
 }
 
 termux_step_configure() {
-    # Use CMake to configure the project.
-    # You might need to adjust the flags based on ZMusic's requirements.
-    # -DCMAKE_INSTALL_PREFIX is crucial for Termux installation path.
-    # -DCMAKE_BUILD_TYPE=Release is common for optimized builds.
+    # Bruh, CMake is cool, also these are regular stuff
+	termux_setup_cmake
+	
     cmake -G "Unix Makefiles" \
         -S $TERMUX_PKG_SRCDIR \
         -B $TERMUX_PKG_BUILDDIR \
@@ -35,7 +32,8 @@ termux_step_make() {
 }
 
 termux_step_make_install() {
-    # Use 'make install' to copy the compiled files to the final destination.
-    make -C $TERMUX_PKG_BUILDDIR install
+    # This will tell the deb maker where everything goes
+    cmake --install $TERMUX_PKG_BUILDDIR
 }
+
 
