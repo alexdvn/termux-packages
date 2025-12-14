@@ -22,8 +22,8 @@ termux_step_configure() {
         -B $TERMUX_PKG_BUILDDIR \
         -DCMAKE_INSTALL_PREFIX=$TERMUX_PREFIX \
         -DCMAKE_BUILD_TYPE=Release \
-				-DHAVE_GLES2=on \
-				-DHAVE_VULKAN=on \
+		-DHAVE_GLES2=on \
+		-DHAVE_VULKAN=on \
         -Wno-dev
 }
 
