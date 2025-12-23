@@ -1,13 +1,11 @@
 TERMUX_PKG_HOMEPAGE=https://www.mesa3d.org
-TERMUX_PKG_DESCRIPTION="Android Vulkan ICD"
+TERMUX_PKG_DESCRIPTION="Android Vulkan ICD with missing feature emulation"
 TERMUX_PKG_LICENSE="MIT"
 TERMUX_PKG_LICENSE_FILE="docs/license.rst"
-TERMUX_PKG_MAINTAINER="xMeM <haooy@outlook.com>"
+TERMUX_PKG_MAINTAINER="leegao"
 TERMUX_PKG_VERSION="25.0.0"
-TERMUX_PKG_REVISION=2
-TERMUX_PKG_SRCURL=git+https://github.com/xMeM/mesa
+TERMUX_PKG_SRCURL=git+https://github.com/leegao/bionic-vulkan-wrapper
 TERMUX_PKG_GIT_BRANCH=wrapper
-_COMMIT=e65c7eb6ee2f9903c3256f2677beb1d98464103f
 TERMUX_PKG_DEPENDS="libandroid-shmem, libc++, libdrm, libx11, libxcb, libxshmfence, libwayland, vulkan-loader-generic, zlib, zstd"
 TERMUX_PKG_BUILD_DEPENDS="libwayland-protocols, libxrandr, xorgproto"
 TERMUX_PKG_API_LEVEL=26
@@ -27,8 +25,6 @@ TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
 "
 
 termux_step_post_get_source() {
-	git fetch --unshallow
-	git checkout $_COMMIT
 	# Do not use meson wrap projects
 	rm -rf subprojects
 }
