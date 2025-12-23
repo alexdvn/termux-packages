@@ -1,0 +1,10 @@
+--- a/meson.build	2025-12-23 12:42:50.588706389 -0500
++++ b/meson.build	2025-12-23 12:44:58.452706396 -0500
+@@ -1414,7 +1414,6 @@
+ functions_to_detect = {
+   'strtof': '',
+   'mkostemp': '',
+-  'memfd_create': '',
+   'random_r': '',
+   'flock': '',
+   'strtok_r': '',
