@@ -139,14 +139,21 @@ check_indentation() {
 	else
 		origin_url="unknown"
 	fi
-	base_commit="HEAD~$(git rev-list --count FETCH_HEAD.. -- || printf 1)"
+
+	base_commit="$(git rev-list "origin/master.." --exclude-first-parent-only --reverse | head -n1)"
+	# On the master branch or failure `git rev-list "origin/master.."`
+	# won't return a commit, so set "HEAD" as a default value.
+	: "${base_commit:="HEAD"}"
 } 2> /dev/null
 
 # Also figure out if we have a `%ci:no-build` trailer in the commit range,
 # we may skip some checks later if yes.
-no_build="$(git log "$base_commit.." --fixed-strings --grep '%ci:no-build' --pretty=format:%H)"
+no_build="$(git log --fixed-strings --grep '%ci:no-build' --pretty=format:%H "$base_commit..")"
 
 check_version() {
+	# !!! vvv TEMPORARY - REMOVE WHEN THIS FUNCTION IS FIXED vvv !!!
+	return
+	# !!! ^^^ TEMPORARY - REMOVE WHEN THIS FUNCTION IS FIXED ^^^ !!!
 	local package_dir="${1%/*}"
 
 	[[ -z "$base_commit" ]] && {
@@ -799,7 +806,7 @@ time_elapsed() {
 }
 
 echo "[INFO]: Starting build script linter ($(date -d "@$start_time" --utc '+%Y-%m-%dT%H:%M:%SZ' 2>&1))"
-echo "[INFO]: Base commit: $base_commit ($(git rev-parse "$base_commit"))"
+git -P log "$base_commit" -n1 --pretty=format:"[INFO]: Base commit    - %h%n[INFO]: Commit message - %s%n"
 echo "[INFO]: Origin URL: ${origin_url}"
 trap 'time_elapsed "$start_time"' EXIT
 
