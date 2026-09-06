@@ -1,20 +1,20 @@
 TERMUX_PKG_HOMEPAGE=https://github.com/AndreRH/hangover
 TERMUX_PKG_DESCRIPTION="A compatibility layer for running Windows programs (Hangover fork)"
 TERMUX_PKG_LICENSE="LGPL-2.1"
-TERMUX_PKG_LICENSE_FILE="LICENSE, LICENSE.OLD, COPYING.LIB"
+TERMUX_PKG_LICENSE_FILE="LICENSE, COPYING.LIB"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="11.0~rc4"
+TERMUX_PKG_VERSION="11.16"
 TERMUX_PKG_SRCURL=(
 	"https://github.com/AndreRH/wine/archive/refs/tags/hangover-${TERMUX_PKG_VERSION/\~/-}.tar.gz"
-	"https://github.com/AndreRH/hangover/releases/download/hangover-${TERMUX_PKG_VERSION/\~/-}/hangover_${TERMUX_PKG_VERSION/\~/-}_ubuntu2004_focal_arm64.tar"
+	"https://github.com/AndreRH/hangover/releases/download/hangover-${TERMUX_PKG_VERSION/\~/-}/hangover_${TERMUX_PKG_VERSION/\~/-}_ubuntu2204_jammy_arm64.tar"
 )
 TERMUX_PKG_SHA256=(
-	cdfbaaf5a14efa794447296a89e82b945d75942e78dc0839ebefc742c7e534d0
-	795fb6008be1dfedad482968584056bb5c4f6ab6fa7972d468ced2b25062160f
+	21e4dd77a9d1d4897194d5751e03a5fc6cdec4390889ad6a652b87d05aa0bb4d
+	ecde5846b2f1b23d394fede04a52cbf31853076b85e98d53a391d9e758345488
 )
 TERMUX_PKG_DEPENDS="fontconfig, freetype, krb5, libandroid-spawn, libc++, libgmp, libgnutls, libxcb, libxcomposite, libxcursor, libxfixes, libxrender, opengl, pulseaudio, sdl2, vulkan-loader, xorg-xrandr"
-TERMUX_PKG_ANTI_BUILD_DEPENDS="vulkan-loader"
 TERMUX_PKG_BUILD_DEPENDS="libandroid-spawn-static, vulkan-loader-generic"
+TERMUX_PKG_ANTI_BUILD_DEPENDS="vulkan-loader"
 TERMUX_PKG_NO_STATICSPLIT=true
 TERMUX_PKG_AUTO_UPDATE=true
 TERMUX_PKG_UPDATE_TAG_TYPE="newest-tag"
@@ -29,10 +29,12 @@ TERMUX_PKG_EXTRA_HOSTBUILD_CONFIGURE_ARGS="
 # Disable userfaultfd syscall as it is missing on older Android, see #25015
 TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
 ac_cv_header_linux_userfaultfd_h=no
+ac_cv_path_GRADLE=no
 enable_wineandroid_drv=no
 enable_tools=yes
 --prefix=$TERMUX_PREFIX/opt/hangover-wine
 --exec-prefix=$TERMUX_PREFIX/opt/hangover-wine
+--includedir=$TERMUX_PREFIX/opt/hangover-wine/include
 --libdir=$TERMUX_PREFIX/opt/hangover-wine/lib
 --with-wine-tools=$TERMUX_PKG_HOSTBUILD_DIR
 --enable-nls
@@ -127,10 +129,13 @@ termux_step_pre_configure() {
 	LDFLAGS="${LDFLAGS/-Wl,-z,relro,-z,now/}"
 
 	LDFLAGS+=" -landroid-spawn"
+
+	# https://github.com/termux-user-repository/tur/commit/9388bf3599bba33d7bd052cab0679fe9cd5917d2#commitcomment-176464300
+	LDFLAGS+=" -Wl,--rosegment"
 }
 
 termux_step_make() {
-	make -j $TERMUX_PKG_MAKE_PROCESSES
+	make -j $TERMUX_PKG_MAKE_PROCESSES -k || bash
 }
 
 termux_step_make_install() {

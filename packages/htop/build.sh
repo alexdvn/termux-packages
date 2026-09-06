@@ -2,10 +2,9 @@ TERMUX_PKG_HOMEPAGE=https://htop.dev/
 TERMUX_PKG_DESCRIPTION="Interactive process viewer for Linux"
 TERMUX_PKG_LICENSE="GPL-2.0"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="3.4.1"
-TERMUX_PKG_REVISION=1
+TERMUX_PKG_VERSION="3.5.3"
 TERMUX_PKG_SRCURL=https://github.com/htop-dev/htop/archive/refs/tags/${TERMUX_PKG_VERSION}/htop-${TERMUX_PKG_VERSION}.tar.gz
-TERMUX_PKG_SHA256=af9ec878f831b7c27d33e775c668ec79d569aa781861c995a0fbadc1bdb666cf
+TERMUX_PKG_SHA256=edf25ee020a5263ffbef9eef5a8c14392bf74e78b3d5c8bc64d9343dd9a82605
 # htop checks setlocale() return value for UTF-8 support, so use libandroid-support.
 TERMUX_PKG_DEPENDS="libandroid-support, ncurses"
 TERMUX_PKG_BREAKS="htop-legacy"

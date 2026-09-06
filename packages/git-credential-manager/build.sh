@@ -2,13 +2,12 @@ TERMUX_PKG_HOMEPAGE="https://aka.ms/gcm"
 TERMUX_PKG_DESCRIPTION="Cross-platform Git credential storage for multiple hosting providers"
 TERMUX_PKG_LICENSE="MIT"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="2.6.1"
-TERMUX_PKG_REVISION=2
+TERMUX_PKG_VERSION="2.9.1"
 TERMUX_PKG_SRCURL="https://github.com/git-ecosystem/git-credential-manager/archive/refs/tags/v${TERMUX_PKG_VERSION}.tar.gz"
-TERMUX_PKG_SHA256=aba0b06b59daa1cd8a16bd9e1ca31a6d9da73e524fe8c045f3acbd0000be1b5e
+TERMUX_PKG_SHA256=248468dcaf111402892c56d4cbc370dcfc1429976e7abcc1120c49757779be39
 TERMUX_PKG_BUILD_IN_SRC=true
-TERMUX_DOTNET_VERSION=8.0
-TERMUX_PKG_DEPENDS="dotnet-host, dotnet-runtime-8.0"
+TERMUX_DOTNET_VERSION=10.0
+TERMUX_PKG_DEPENDS="dotnet-host, dotnet-runtime-10.0"
 TERMUX_PKG_EXCLUDED_ARCHES="arm"
 TERMUX_PKG_AUTO_UPDATE=true
 
@@ -30,14 +29,22 @@ termux_step_make() {
 	termux_dotnet_kill
 }
 
+# The concern about preventing `rm -rf "${TERMUX_PREFIX}/lib"` from expanding to
+# `rm -rf "/lib/"` is valid, but the suggested remedy of `${var:?}` is not how we
+# prefer to handle null value errors.
+# shellcheck disable=SC2115
 termux_step_make_install() {
-	rm -fr "${TERMUX_PREFIX}/lib/${TERMUX_PKG_NAME}"
+	# Sanity check the variables used in the `rm`'s below, just in case.
+	[[ -n "$TERMUX_PREFIX" ]] || termux_error_exit "TERMUX_PREFIX is unset, this shouldn't even be possible."
+	[[ -n "$TERMUX_PKG_NAME" ]] || termux_error_exit "TERMUX_PKG_NAME is unset, this shouldn't even be possible."
+
+	rm -rf "${TERMUX_PREFIX}/lib/${TERMUX_PKG_NAME}"
 	mkdir -p "${TERMUX_PREFIX}/lib/${TERMUX_PKG_NAME}"
 	cp -r "out/shared/Git-Credential-Manager/bin/Release/net${TERMUX_DOTNET_VERSION}/${DOTNET_TARGET_NAME}/publish"/* "${TERMUX_PREFIX}/lib/${TERMUX_PKG_NAME}"
 	ln -sf "${TERMUX_PREFIX}/lib/${TERMUX_PKG_NAME}/git-credential-manager" "$TERMUX_PREFIX/bin"
 
 	# Remove translations
-	rm -rf "${TERMUX_PREFIX:?}/lib/${TERMUX_PKG_NAME:?}"/*/
+	rm -rf "${TERMUX_PREFIX}/lib/${TERMUX_PKG_NAME}"/*/
 	# Remove debug files
 	rm "${TERMUX_PREFIX}/lib/${TERMUX_PKG_NAME}"/*.pdb
 	# Remove duplicate license

@@ -2,18 +2,21 @@ TERMUX_PKG_HOMEPAGE=https://pytorch.org/
 TERMUX_PKG_DESCRIPTION="Tensors and Dynamic neural networks in Python"
 TERMUX_PKG_LICENSE="BSD 3-Clause"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="2.9.1"
+TERMUX_PKG_VERSION="2.11.0"
+TERMUX_PKG_REVISION=2
 TERMUX_PKG_SRCURL=git+https://github.com/pytorch/pytorch
 TERMUX_PKG_UPDATE_TAG_TYPE="latest-release-tag"
-TERMUX_PKG_DEPENDS="abseil-cpp, libc++, libopenblas, libprotobuf, python, python-numpy, python-pip"
+TERMUX_PKG_DEPENDS="abseil-cpp, libandroid-execinfo, libc++, libopenblas, libprotobuf, python, python-numpy, python-pip"
 TERMUX_PKG_BUILD_DEPENDS="vulkan-headers, vulkan-loader-android"
 TERMUX_PKG_HOSTBUILD=true
-TERMUX_PKG_PYTHON_COMMON_DEPS="wheel, pyyaml, typing_extensions"
-TERMUX_PKG_PYTHON_BUILD_DEPS="numpy"
+TERMUX_PKG_PYTHON_COMMON_BUILD_DEPS="wheel, pyyaml, typing_extensions"
+TERMUX_PKG_PYTHON_CROSS_BUILD_DEPS="numpy"
 # USE_DISTRIBUTED=ON fixes
 # ModuleNotFoundError: No module named 'torch._C._distributed_c10d'; 'torch._C' is not a package
 # in
 # python -c "from torch.distributed._tensor import DTensor"
+#
+# MI_NO_OPT_ARCH=ON fixes #29202 with architecture specific optimizations disabled
 TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
 -DCMAKE_POLICY_VERSION_MINIMUM=3.5
 -DANDROID_NO_TERMUX=OFF
@@ -41,13 +44,8 @@ TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
 -DUSE_DISTRIBUTED=ON
 -DANDROID_NDK=${NDK}
 -DANDROID_NDK_HOST_SYSTEM_NAME=linux-$HOSTTYPE
-"
-
-TERMUX_PKG_RM_AFTER_INSTALL="
-lib/pkgconfig
-lib/cmake/fmt
-lib/libfmt.a
-include/fmt
+-DCMAKE_POLICY_VERSION_MINIMUM=3.5
+-DMI_NO_OPT_ARCH=ON
 "
 
 termux_step_host_build() {
@@ -86,10 +84,4 @@ termux_step_make_install() {
 	export PYTORCH_BUILD_NUMBER=0
 	pip -v install --no-deps --no-build-isolation --prefix $TERMUX_PREFIX "$TERMUX_PKG_SRCDIR"
 	ln -sfr ${TERMUX_PYTHON_HOME}/site-packages/torch/lib/*.so ${TERMUX_PREFIX}/lib
-}
-
-termux_step_create_debscripts() {
-	echo "#!$TERMUX_PREFIX/bin/sh" > postinst
-	echo "echo 'Installing dependencies for $TERMUX_PKG_NAME...'" >> postinst
-	echo "pip3 install torch" >> postinst
 }

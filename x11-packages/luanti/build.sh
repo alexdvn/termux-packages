@@ -2,18 +2,15 @@ TERMUX_PKG_HOMEPAGE=https://www.luanti.org
 TERMUX_PKG_DESCRIPTION="An open source voxel game engine."
 TERMUX_PKG_LICENSE="LGPL-2.1"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="1:5.14.0"
-TERMUX_PKG_SRCURL=https://github.com/luanti-org/luanti/archive/refs/tags/${TERMUX_PKG_VERSION:2}.tar.gz
-TERMUX_PKG_SHA256=b9f561fa37db3c7ea1b8ba15cfede8282b7a79b9e939b0357269c8b037cf5aea
+TERMUX_PKG_VERSION="1:5.17.0"
+TERMUX_PKG_SRCURL="https://github.com/luanti-org/luanti/archive/refs/tags/${TERMUX_PKG_VERSION:2}.tar.gz"
+TERMUX_PKG_SHA256=52e7dd315ae0e5c3868a23231e691578cd694bcca5af627fc57c03f32bdc846f
 TERMUX_PKG_AUTO_UPDATE=true
-TERMUX_PKG_DEPENDS="freetype, jsoncpp, libandroid-spawn, libc++, libcurl, libgmp, libjpeg-turbo, libiconv, libluajit, libpng, libsqlite, libvorbis, libx11, libxi, luanti-common, openal-soft, opengl, xdg-utils, zlib, zstd"
-# In 5.12.0, luanti upstream officially migrated to SDL2,
-# but for now, enabling SDL2 in Termux would:
-# - disable EGL support, which would significantly reduce performance and driver compatibility
-# - make the colors of everything strangely washed out
-# so it makes more sense to keep SDL2 disabled in this luanti for now,
-# since the non-SDL2 mode seems to continue to work without problems.
-# Enable SDL2 in the future when possible, after the above problems are gone.
+# libandroid-stub is required to prevent large ELF executables that depend on harfbuzz, or any
+# of whose dependencies depend on harfbuzz, recursively,
+# from conflicting with the libharfbuzz_ng.so that some Android ROMs' libOpenSLES.so libraries
+# depend on, which would otherwise cause no audio output on some devices.
+TERMUX_PKG_DEPENDS="freetype, jsoncpp, libandroid-spawn, libandroid-stub, libc++, libcurl, libgmp, libjpeg-turbo, libiconv, luajit, libpng, libsqlite, libvorbis, luanti-common, openal-soft, opengl, sdl3, xdg-utils, zlib, zstd"
 TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
 -DBUILD_SERVER=TRUE
 -DBUILD_BENCHMARKS=TRUE
@@ -31,13 +28,9 @@ TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
 -DENABLE_LTO=FALSE
 -DENABLE_REDIS=FALSE
 -DENABLE_PROMETHEUS=FALSE
--DUSE_SDL2=FALSE
+-DUSE_SDL3=TRUE
 "
 
 termux_step_pre_configure() {
 	export LDFLAGS+=" -landroid-spawn"
-	# successful application-side workaround of
-	# https://github.com/kcat/openal-soft/issues/1111
-	# https://github.com/termux/termux-packages/issues/23148
-	export LDFLAGS+=" -Wl,--no-as-needed,-lOpenSLES,--as-needed"
 }

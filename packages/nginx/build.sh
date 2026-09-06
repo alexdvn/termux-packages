@@ -2,10 +2,9 @@ TERMUX_PKG_HOMEPAGE=https://www.nginx.org
 TERMUX_PKG_DESCRIPTION="Lightweight HTTP server"
 TERMUX_PKG_LICENSE="BSD 2-Clause"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="1.29.4"
-TERMUX_PKG_REVISION=1
+TERMUX_PKG_VERSION="1.31.5"
 TERMUX_PKG_SRCURL=https://nginx.org/download/nginx-$TERMUX_PKG_VERSION.tar.gz
-TERMUX_PKG_SHA256=5a7d37eee505866fbab5810fa9f78247d6d5d9157a595c4e7a72043141ddab25
+TERMUX_PKG_SHA256=e951607d534836624bd36b6b45a71dbfb055237deae3738da6bbf3270dada279
 TERMUX_PKG_AUTO_UPDATE=true
 TERMUX_PKG_DEPENDS="libandroid-glob, libcrypt, pcre2, openssl, zlib"
 TERMUX_PKG_BUILD_IN_SRC=true
@@ -63,6 +62,7 @@ termux_step_configure() {
 		--http-scgi-temp-path="$TERMUX_PREFIX/var/lib/nginx/scgi" \
 		--http-uwsgi-temp-path="$TERMUX_PREFIX/var/lib/nginx/uwsgi" \
 		--with-http_auth_request_module \
+		--with-http_realip_module \
 		--with-http_ssl_module \
 		--with-http_v2_module \
 		--with-http_v3_module \
@@ -70,6 +70,7 @@ termux_step_configure() {
 		--with-http_sub_module \
 		--with-http_dav_module \
 		--with-stream \
+		--with-stream_realip_module \
 		--with-stream_ssl_module \
 		--with-stream_ssl_preread_module \
 		$DEBUG_FLAG
