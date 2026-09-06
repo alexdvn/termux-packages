@@ -2,12 +2,12 @@ TERMUX_PKG_HOMEPAGE=https://lib.openmpt.org/libopenmpt/
 TERMUX_PKG_DESCRIPTION="Library to render tracker music formats to a PCM audio stream"
 TERMUX_PKG_LICENSE="BSD 3-Clause"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="0.8.4"
-TERMUX_PKG_SRCURL=https://lib.openmpt.org/files/libopenmpt/src/libopenmpt-${TERMUX_PKG_VERSION}+release.autotools.tar.gz
-TERMUX_PKG_SHA256=627f9bf11aacae615a1f2c982c7e88cb21f11b2d6f0267946f7c82c5eae4943b
-TERMUX_PKG_AUTO_UPDATE=true
-TERMUX_PKG_BUILD_DEPENDS="libflac, libogg, libsndfile, pulseaudio"
+TERMUX_PKG_VERSION="0.8.9"
+TERMUX_PKG_SRCURL="https://lib.openmpt.org/files/libopenmpt/src/libopenmpt-${TERMUX_PKG_VERSION}+release.autotools.tar.gz"
+TERMUX_PKG_SHA256=d7ce84fd05d686c4bcf66af40eae857afa371442db60eeda3f874bd6cf6fc318
 TERMUX_PKG_DEPENDS="libc++, libvorbis, libmpg123, zlib"
+TERMUX_PKG_BUILD_DEPENDS="libflac, libogg, libsndfile, pulseaudio"
+TERMUX_PKG_AUTO_UPDATE=true
 
 TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
 --without-portaudio

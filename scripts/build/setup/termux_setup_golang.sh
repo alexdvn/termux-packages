@@ -3,8 +3,8 @@ termux_setup_golang() {
 	export GOPATH="${TERMUX_COMMON_CACHEDIR}/go-path" GOCACHE="${TERMUX_COMMON_CACHEDIR}/go-build"
 	mkdir -p "$GOPATH" "$GOCACHE"
 	if [ "$TERMUX_ON_DEVICE_BUILD" = "false" ]; then
-		local TERMUX_GO_VERSION=go1.25.4
-		local TERMUX_GO_SHA256=9fa5ffeda4170de60f67f3aa0f824e426421ba724c21e133c1e35d6159ca1bec
+		local TERMUX_GO_VERSION=go1.27.1
+		local TERMUX_GO_SHA256=63d339f0da5ab53635a56f2490a7984dfe12dfcff22ad749f63edaf590168445
 		local TERMUX_GO_PLATFORM=linux-amd64
 
 		local TERMUX_BUILDGO_FOLDER
@@ -38,6 +38,8 @@ termux_setup_golang() {
 			cd "$TERMUX_BUILDGO_FOLDER"
 			. "${TERMUX_SCRIPTDIR}/packages/golang/patch-script/fix-hardcoded-etc-resolv-conf.sh"
 			. "${TERMUX_SCRIPTDIR}/packages/golang/patch-script/remove-pidfd.sh"
+			. "${TERMUX_SCRIPTDIR}/packages/golang/patch-script/remove-futex_time64.sh"
+			. "${TERMUX_SCRIPTDIR}/packages/golang/patch-script/fix-android-netlink.sh"
 		)
 	else
 		if [[ "$TERMUX_APP_PACKAGE_MANAGER" = "apt" && "$(dpkg-query -W -f '${db:Status-Status}\n' golang 2>/dev/null)" != "installed" ]] ||

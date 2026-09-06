@@ -1,16 +1,16 @@
-TERMUX_PKG_HOMEPAGE=https://nvim-neorocks.github.io/
+TERMUX_PKG_HOMEPAGE=https://lux.lumen-labs.org
 TERMUX_PKG_DESCRIPTION="A package manager for Lua, similar to luarocks"
 TERMUX_PKG_LICENSE="LGPL-3.0-or-later"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="0.22.3"
-TERMUX_PKG_REVISION=1
-TERMUX_PKG_SRCURL="https://github.com/nvim-neorocks/lux/archive/refs/tags/v${TERMUX_PKG_VERSION}.tar.gz"
-TERMUX_PKG_SHA256=c855f2e8b66e70df23a74492e708b95757676b1ddae66c6e80e6f1c124f25456
+TERMUX_PKG_VERSION="0.43.4"
+TERMUX_PKG_SRCURL="https://github.com/lumen-oss/lux/archive/refs/tags/v${TERMUX_PKG_VERSION}.tar.gz"
+TERMUX_PKG_SHA256=3c85f6b2db76c0399c9cbcf1fced63f2410e4171c71e6bd8b773f96345406461
 TERMUX_PKG_DEPENDS="bzip2, gpgme, libgit2, libgpg-error, lua54, openssl, xz-utils"
 TERMUX_PKG_PROVIDES="lx"
 TERMUX_PKG_AUTO_UPDATE=true
 TERMUX_PKG_BUILD_IN_SRC=true
 TERMUX_PKG_HOSTBUILD=true
+TERMUX_PKG_EXCLUDED_ARCHES="arm, i686"
 
 termux_pkg_auto_update() {
 	# based on `termux_github_api_get_tag.sh`
@@ -19,7 +19,7 @@ termux_pkg_auto_update() {
 	newest_tags="$(curl -d "$(cat <<-EOF | tr '\n' ' '
 	{
 		"query": "query {
-			repository(owner: \"nvim-neorocks\", name: \"lux\") {
+			repository(owner: \"lumen-oss\", name: \"lux\") {
 				refs(refPrefix: \"refs/tags/\", first: 20, orderBy: {
 					field: TAG_COMMIT_DATE, direction: DESC
 				})
@@ -49,41 +49,33 @@ termux_step_host_build() {
 		return
 	fi
 
-	local ubuntu_packages
-
-	# libgpgme-dev and any dependencies that aren't in the ubuntu builder at time of writing
-	ubuntu_packages+="dirmngr,"
-	ubuntu_packages+="gnupg,"
-	ubuntu_packages+="gnupg-l10n,"
-	ubuntu_packages+="gnupg-utils,"
-	ubuntu_packages+="gpg,"
-	ubuntu_packages+="gpg-agent,"
-	ubuntu_packages+="gpg-wks-client,"
-	ubuntu_packages+="gpgconf,"
-	ubuntu_packages+="gpgsm,"
-	ubuntu_packages+="gpgv,"
-	ubuntu_packages+="keyboxd,"
-	ubuntu_packages+="libassuan-dev,"
-	ubuntu_packages+="libgpgme-dev,"
-	ubuntu_packages+="libgpgme11t64,"
-
-	termux_download_ubuntu_packages "$ubuntu_packages"
-
-	PKG_CONFIG_PATH_x86_64_unknown_linux_gnu="${TERMUX_PKG_HOSTBUILD_DIR}/ubuntu_packages/usr/lib/x86_64-linux-gnu/pkgconfig"
-	RUSTFLAGS="-L${TERMUX_PKG_HOSTBUILD_DIR}/ubuntu_packages/usr/lib/x86_64-linux-gnu"
-
-	export PKG_CONFIG_PATH_x86_64_unknown_linux_gnu RUSTFLAGS
-
 	cd "${TERMUX_PKG_SRCDIR}" || termux_error_exit "Couldn't enter source code directory: ${TERMUX_PKG_SRCDIR}"
 
 	termux_setup_rust
+
+	termux_download_ubuntu_packages libgpgme-dev libassuan-dev
+
+	local HOSTBUILD_ROOTFS="$TERMUX_PKG_HOSTBUILD_DIR/ubuntu_packages"
+	local HOSTBUILD_ARCH_LIBDIR="/usr/lib/x86_64-linux-gnu"
+
+	find "${HOSTBUILD_ROOTFS}" -type f -name '*.pc' | \
+		xargs -n 1 sed -i -e "s|/usr|${HOSTBUILD_ROOTFS}/usr|g"
+	# delete all static libraries to prevent errors:
+	# rust-lld: error: undefined symbol: assuan_set_flag
+	# referenced by engine-assuan.o:(llass_new) in archive
+	# /home/builder/.termux-build/lux-cli/host-build/ubuntu_packages
+	# /usr/lib/x86_64-linux-gnu/libgpgme.a
+	find "${HOSTBUILD_ROOTFS}" -type f -name '*.a' -delete
+	find "${HOSTBUILD_ROOTFS}${HOSTBUILD_ARCH_LIBDIR}" -xtype l \
+		-exec sh -c "ln -snvf ${HOSTBUILD_ARCH_LIBDIR}/\$(readlink \$1) \$1" sh {} \;
+
+	PKG_CONFIG_PATH_x86_64_unknown_linux_gnu="${HOSTBUILD_ROOTFS}${HOSTBUILD_ARCH_LIBDIR}/pkgconfig"
+	export PKG_CONFIG_PATH_x86_64_unknown_linux_gnu
 
 	cargo fetch --locked
 
 	# build shell completions
 	cargo run --package xtask --release --frozen -- dist-completions
-
-	unset PKG_CONFIG_PATH_x86_64_unknown_linux_gnu RUSTFLAGS
 
 	# preserve the hostbuilt shell completions
 	rm -rf "${TERMUX_PKG_HOSTBUILD_DIR}/dist/"
@@ -92,7 +84,7 @@ termux_step_host_build() {
 
 termux_step_pre_configure() {
 	# software does not officially support cross-compilation, but for some reason, it appears to work anyway
-	# https://github.com/nvim-neorocks/lux/blob/c794f476cb459df5bcb6e971c0c6f76e6a2a4dd4/lux-lib/src/lua_rockspec/platform.rs#L72
+	# https://github.com/lumen-oss/lux/blob/c794f476cb459df5bcb6e971c0c6f76e6a2a4dd4/lux-lib/src/lua_rockspec/platform.rs#L72
 	if [[ "$TERMUX_ON_DEVICE_BUILD" == "false" ]]; then
 		echo "WARNING: $TERMUX_PKG_NAME's upstream project does not officially support cross-compilation!"
 	fi
@@ -108,11 +100,6 @@ termux_step_pre_configure() {
 	fi
 
 	cargo fetch --locked --target "$CARGO_TARGET_NAME"
-
-	# software does not officially support android, so treat android as linux
-	find "$TERMUX_PKG_SRCDIR" -type f | \
-		xargs -n 1 sed -i \
-		-e 's|target_os = "linux"|target_os = "android"|g'
 }
 
 termux_step_make() {

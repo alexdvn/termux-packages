@@ -2,9 +2,9 @@ TERMUX_PKG_HOMEPAGE='https://invent.kde.org/frameworks/kdbusaddons'
 TERMUX_PKG_DESCRIPTION='Addons to QtDBus'
 TERMUX_PKG_LICENSE="LGPL-2.0, LGPL-3.0"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="6.21.0"
+TERMUX_PKG_VERSION="6.29.0"
 TERMUX_PKG_SRCURL="https://download.kde.org/stable/frameworks/${TERMUX_PKG_VERSION%.*}/kdbusaddons-${TERMUX_PKG_VERSION}.tar.xz"
-TERMUX_PKG_SHA256="b5f4ee71feef3e2c23f1eebd89ac6796940bdac8f54429b5cf94bafb10462279"
+TERMUX_PKG_SHA256=a3d2de669bfad5de3f86cc8c6448a02f7567e4ad04aa6099ccfaa2df5f07e8f8
 TERMUX_PKG_DEPENDS="qt6-qtbase"
 TERMUX_PKG_BUILD_DEPENDS="extra-cmake-modules (>= ${TERMUX_PKG_VERSION%.*}), libc++, qt6-qttools"
 TERMUX_PKG_AUTO_UPDATE=true

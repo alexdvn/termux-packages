@@ -11,7 +11,7 @@ diff --git a/build/config/compiler/BUILD.gn b/build/config/compiler/BUILD.gn
 index c9a67656..01eb5811 100644
 --- a/build/config/compiler/BUILD.gn
 +++ b/build/config/compiler/BUILD.gn
-@@ -2078,6 +2078,12 @@ config("default_warnings") {
+@@ -2285,6 +2285,12 @@ config("default_warnings") {
      ldflags += [ "-Wl,-no_warn_duplicate_libraries" ]
    }
  
@@ -21,6 +21,6 @@ index c9a67656..01eb5811 100644
 +    "-Werror=macro-redefined",
 +  ]
 +
-   # Rust warnings
+   configs = [ ":default_clippy_lints" ]
+ }
  
-   # Require `unsafe` blocks even in `unsafe` fns. This is intended to become

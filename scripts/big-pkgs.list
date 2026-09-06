@@ -1,5 +1,6 @@
 angle-android
 aosp-libs
+awscli
 carbonyl
 carbonyl-host-tools
 chromium
@@ -11,6 +12,7 @@ dart
 deno
 dotnet8.0
 dotnet9.0
+dotnet10.0
 electron-for-code-oss
 electron-host-tools-for-code-oss
 emscripten
@@ -21,6 +23,9 @@ gitea
 grafana
 hangover-wine
 libllvm
+libreoffice
+octave-x
+plasma-workspace
 python-llvmlite
 python-torch
 qemu-system-x86-64
@@ -36,4 +41,7 @@ tinygo
 tinymist
 wasi-libc
 wasmer
+wezterm-nightly
+wine-stable
 zig
+zen-browser
