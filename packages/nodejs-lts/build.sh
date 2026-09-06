@@ -3,16 +3,17 @@ TERMUX_PKG_DESCRIPTION="Open Source, cross-platform JavaScript runtime environme
 TERMUX_PKG_LICENSE="MIT"
 TERMUX_PKG_MAINTAINER="Yaksh Bariya <thunder-coding@termux.dev>"
 # Also update version in termux_setup_nodejs.sh when updating this package
-TERMUX_PKG_VERSION=24.12.0
+TERMUX_PKG_VERSION=24.18.0
 TERMUX_PKG_REVISION=1
 TERMUX_PKG_SRCURL=https://nodejs.org/dist/v${TERMUX_PKG_VERSION}/node-v${TERMUX_PKG_VERSION}.tar.xz
-TERMUX_PKG_SHA256=6d3e891a016b90f6c6a19ea5cbc9c90c57eef9198670ba93f04fa82af02574ae
+TERMUX_PKG_SHA256=e94afde24db08e0c564ee7110a2d5aab51ee0059382c9fd8233c54eec47b28f9
 # thunder-coding: don't try to autoupdate nodejs, that thing takes 2 whole hours to build for a single arch, and requires a lot of patch updates everytime. Also I run tests everytime I update it to ensure least bugs
 TERMUX_PKG_AUTO_UPDATE=false
 # Note that we do not use a shared libuv to avoid an issue with the Android
 # linker, which does not use symbols of linked shared libraries when resolving
 # symbols on dlopen(). See https://github.com/termux/termux-packages/issues/462.
 TERMUX_PKG_DEPENDS="libc++, openssl, c-ares, libicu, libsqlite, zlib"
+TERMUX_PKG_RECOMMENDS="npm"
 TERMUX_PKG_CONFLICTS="nodejs, nodejs-current"
 TERMUX_PKG_BREAKS="nodejs-dev"
 TERMUX_PKG_REPLACES="nodejs-current, nodejs-dev"
@@ -30,13 +31,13 @@ termux_step_host_build() {
 	######
 	# Do host-build of ICU, which is required for nodejs
 	######
-	local ICU_VERSION=78.1
+	local ICU_VERSION=78.3
 	local ICU_TAR=icu4c-${ICU_VERSION}-sources.tgz
 	local ICU_DOWNLOAD=https://github.com/unicode-org/icu/releases/download/release-${ICU_VERSION}/$ICU_TAR
 	termux_download \
 		$ICU_DOWNLOAD\
 		$TERMUX_PKG_CACHEDIR/$ICU_TAR \
-		6217f58ca39b23127605cfc6c7e0d3475fe4b0d63157011383d716cb41617886
+		3a2e7a47604ba702f345878308e6fefeca612ee895cf4a5f222e7955fabfe0c0
 	tar xf $TERMUX_PKG_CACHEDIR/$ICU_TAR
 	cd icu/source
 	export CC="$TERMUX_HOST_LLVM_BASE_DIR/bin/clang"
@@ -118,6 +119,12 @@ termux_step_configure() {
 		termux_error_exit "Unsupported arch '$TERMUX_ARCH'"
 	fi
 
+	# aligned_alloc is used in cctest binary
+	if [[ "$TERMUX_PKG_API_LEVEL" -lt 28 ]]; then
+		CFLAGS+=" -Daligned_alloc=memalign"
+		CXXFLAGS+=" -Daligned_alloc=memalign"
+	fi
+
 	# Do not enable by default as it has severe performance degradations.
 	# Causes upto 10x performance degradations
 	#
@@ -153,16 +160,24 @@ termux_step_configure() {
 	fi
 	# See note above TERMUX_PKG_DEPENDS why we do not use a shared libuv.
 	# When building with ninja, build.ninja is generated for both Debug and Release builds.
+	# Make node-gyp use the headers installed with this package
+	# ($TERMUX_PREFIX/include/node) instead of downloading the official ones
+	# from nodejs.org. The installed headers are patched by common.gypi.patch;
+	# without this flag node-gyp pulls the upstream common.gypi whose android
+	# branch references an undefined android_ndk_path variable and breaks
+	# every native module build ("gyp: Undefined variable android_ndk_path").
 	./configure \
 		--prefix=$TERMUX_PREFIX \
 		--dest-cpu=$DEST_CPU \
 		--dest-os=android \
+		--without-npm \
 		--shared-cares \
 		--shared-openssl \
 		--shared-sqlite \
 		--shared-zlib \
 		--with-intl=system-icu \
 		--cross-compiling \
+		--use-prefix-to-find-headers \
 		--ninja \
 		"${_DEBUG[@]}"
 
@@ -200,8 +215,13 @@ termux_step_make_install() {
 }
 
 termux_step_create_debscripts() {
-	cat <<- EOF > ./postinst
+	cat <<- EOF > ./preinst
 	#!$TERMUX_PREFIX/bin/sh
-	npm config set foreground-scripts true
+	if [ "\$#" = "3" ] && dpkg --compare-versions "\$2" le "24.13.0"; then
+		echo "Starting with nodejs-lts v24.13.0-1, npm is no longer bundled with nodejs-lts package."
+		echo "You might want to install npm package separately if you need it."
+		echo "You can install it by running: pkg install npm"
+		echo "It should not be needed unless you are using --no-install-recommends with apt."
+	fi
 	EOF
 }

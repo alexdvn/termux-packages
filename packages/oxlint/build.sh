@@ -2,9 +2,9 @@ TERMUX_PKG_HOMEPAGE=https://oxc.rs/
 TERMUX_PKG_DESCRIPTION="Oxc JavaScript linter"
 TERMUX_PKG_LICENSE="MIT"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="1.38.0"
+TERMUX_PKG_VERSION="1.81.0"
 TERMUX_PKG_SRCURL="https://github.com/oxc-project/oxc/archive/refs/tags/oxlint_v$TERMUX_PKG_VERSION.tar.gz"
-TERMUX_PKG_SHA256=aede0d8f368aecc7fee5e5f53dd3bbe60b68646d70a29fc903e88ff9bf37c6e3
+TERMUX_PKG_SHA256=29431517f760ca4c6ba58d4416faf306bc9fceb0e11f9889a85b674b1ea34d60
 TERMUX_PKG_AUTO_UPDATE=true
 TERMUX_PKG_BUILD_IN_SRC=true
 
@@ -52,10 +52,6 @@ termux_step_pre_configure() {
 	export TARGET_CMAKE_TOOLCHAIN_FILE="$TERMUX_PKG_BUILDDIR/android.toolchain.cmake"
 	touch "$TARGET_CMAKE_TOOLCHAIN_FILE"
 
-	: "${CARGO_HOME:=$HOME/.cargo}"
-	export CARGO_HOME
-	cargo fetch --target "$CARGO_TARGET_NAME"
-
 	# ld.lld: error: undefined symbol: __atomic_load_8
 	if [[ "$TERMUX_ARCH" == "i686" ]]; then
 		local -u env_host="${CARGO_TARGET_NAME//-/_}"
@@ -64,7 +60,7 @@ termux_step_pre_configure() {
 }
 
 termux_step_make() {
-	cargo build --jobs "$TERMUX_PKG_MAKE_PROCESSES" --target "$CARGO_TARGET_NAME" --release --all-features
+	cargo build --jobs "$TERMUX_PKG_MAKE_PROCESSES" --target "$CARGO_TARGET_NAME" --release
 }
 
 termux_step_make_install() {

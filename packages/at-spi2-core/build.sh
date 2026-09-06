@@ -2,9 +2,10 @@ TERMUX_PKG_HOMEPAGE=https://wiki.gnome.org/Accessibility
 TERMUX_PKG_DESCRIPTION="Assistive Technology Service Provider Interface (AT-SPI)"
 TERMUX_PKG_LICENSE="LGPL-2.1"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="2.58.3"
-TERMUX_PKG_SRCURL=https://download.gnome.org/sources/at-spi2-core/${TERMUX_PKG_VERSION%.*}/at-spi2-core-${TERMUX_PKG_VERSION}.tar.xz
-TERMUX_PKG_SHA256=b0fabea6c9742eda8c9c675f9b8c1d1babba1da82da03ea1103710233717c1b0
+TERMUX_PKG_VERSION="2.60.6"
+# https://download.gnome.org/sources/at-spi2-core/${TERMUX_PKG_VERSION%.*}/at-spi2-core-${TERMUX_PKG_VERSION}.tar.xz
+TERMUX_PKG_SRCURL=https://gitlab.gnome.org/GNOME/at-spi2-core/-/archive/${TERMUX_PKG_VERSION}/at-spi2-core-${TERMUX_PKG_VERSION}.tar.gz
+TERMUX_PKG_SHA256=3ad6bcc25b884ac154aa8c12e2d907d04b514d47d06e8a07ec18ffcf1c98dc26
 TERMUX_PKG_AUTO_UPDATE=true
 TERMUX_PKG_DEPENDS="dbus, glib, libx11, libxi, libxtst"
 TERMUX_PKG_BUILD_DEPENDS="g-ir-scanner, libxml2"
@@ -22,6 +23,7 @@ TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
 termux_step_pre_configure() {
 	termux_setup_gir
 	termux_setup_glib_cross_pkg_config_wrapper
+	termux_setup_python_pip
 
 	export TERMUX_MESON_ENABLE_SOVERSION=1
 }

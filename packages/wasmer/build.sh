@@ -3,9 +3,10 @@ TERMUX_PKG_DESCRIPTION="A fast and secure WebAssembly runtime"
 TERMUX_PKG_LICENSE="MIT"
 TERMUX_PKG_LICENSE_FILE="ATTRIBUTIONS, LICENSE"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="6.1.0"
-TERMUX_PKG_SRCURL=https://github.com/wasmerio/wasmer/archive/refs/tags/v${TERMUX_PKG_VERSION}.tar.gz
-TERMUX_PKG_SHA256=7bccb5b86724ea35ca9373fb81092080a615c1baa6129a8eeee9ed3e3f74b9b1
+TERMUX_PKG_VERSION="7.1.0"
+TERMUX_PKG_REVISION="1"
+TERMUX_PKG_SRCURL=git+https://github.com/wasmerio/wasmer
+TERMUX_PKG_GIT_BRANCH="v${TERMUX_PKG_VERSION}"
 TERMUX_PKG_BUILD_IN_SRC=true
 TERMUX_PKG_NO_STATICSPLIT=true
 TERMUX_PKG_AUTO_UPDATE=true
@@ -14,6 +15,22 @@ TERMUX_PKG_AUTO_UPDATE=true
 TERMUX_PKG_EXCLUDED_ARCHES="arm, i686"
 
 termux_step_pre_configure() {
+	termux_setup_rust
+
+	# cargo-binstall has patches for other dependencies as well as rustls-platform-verifier, but wasmer doesn't need all of them, only the patch to replace instances of "android", particularly because wasmer's WASI guest needs absolute path /etc preserved
+	cargo vendor
+	find ./vendor -mindepth 1 -maxdepth 1 -type d \
+		! -wholename ./vendor/rustls-platform-verifier \
+		-exec rm -rf '{}' \;
+	find vendor/rustls-platform-verifier -type f -print0 | \
+		xargs -0 sed -i \
+		-e 's|"android"|"disabling_this_because_it_is_for_building_an_apk"|g'
+	cat >> Cargo.toml <<-EOF
+
+		[patch.crates-io]
+		rustls-platform-verifier = { path = "./vendor/rustls-platform-verifier" }
+	EOF
+
 	# https://github.com/rust-lang/compiler-builtins#unimplemented-functions
 	# https://github.com/rust-lang/rfcs/issues/2629
 	# https://github.com/rust-lang/rust/issues/46651
@@ -21,7 +38,6 @@ termux_step_pre_configure() {
 	local env_host=$(printf $CARGO_TARGET_NAME | tr a-z A-Z | sed s/-/_/g)
 	export CARGO_TARGET_${env_host}_RUSTFLAGS+=" -C link-arg=$(${CC} -print-libgcc-file-name)"
 	export WASMER_INSTALL_PREFIX="${TERMUX_PREFIX}"
-	termux_setup_rust
 }
 
 termux_step_make() {
@@ -74,7 +90,7 @@ termux_step_make() {
 		--release \
 		--manifest-path=lib/cli/Cargo.toml \
 		--no-default-features \
-		--features sys,headless-minimal \
+		--features sys,headless-minimal,${compilers} \
 		--bin wasmer-headless
 
 	echo "make build-capi-headless"
@@ -85,7 +101,7 @@ termux_step_make() {
 		--release \
 		--manifest-path lib/c-api/Cargo.toml \
 		--no-default-features \
-		--features compiler-headless,wasi,webc_runner \
+		--features compiler-headless,wasi,webc_runner,${compilers} \
 		--target-dir target/headless
 }
 
